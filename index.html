@@ -3,331 +3,411 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>雇用条件管理システム Pro</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.58.0/build/stlite.css">
+    <title>Employment Contract Builder - Enhanced</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        #loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            color: white;
-            flex-direction: column;
-        }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .loading-text {
-            margin-top: 20px;
-            font-size: 1.2rem;
-        }
-        #root {
-            min-height: 100vh;
-        }
-        .fullscreen-tip {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: #667eea;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            z-index: 1000;
-            font-size: 14px;
-        }
-        .fullscreen-tip button {
-            background: white;
-            color: #667eea;
-            border: none;
-            padding: 5px 15px;
-            margin-left: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; margin: 0; padding: 0; background: #0f172a; color: #1e293b; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .flex-1 { flex: 1; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 8px; }
+        .gap-3 { gap: 12px; }
+        .h-screen { height: 100vh; }
+        .overflow-y-auto { overflow-y: auto; }
+        .p-4 { padding: 16px; }
+        .p-6 { padding: 24px; }
+        .px-6 { padding-left: 24px; padding-right: 24px; }
+        .py-3 { padding-top: 12px; padding-bottom: 12px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-4 { margin-bottom: 16px; }
+        .mb-6 { margin-bottom: 24px; }
+        .text-xs { font-size: 12px; line-height: 1.4; }
+        .text-sm { font-size: 14px; line-height: 1.5; }
+        .text-lg { font-size: 18px; line-height: 1.5; }
+        .text-2xl { font-size: 24px; line-height: 1.3; }
+        .font-bold { font-weight: 700; }
+        .font-black { font-weight: 900; }
+        .text-white { color: #ffffff; }
+        .text-slate-400 { color: #94a3b8; }
+        .text-slate-500 { color: #64748b; }
+        .bg-white { background-color: #ffffff; }
+        .bg-slate-50 { background-color: #f8fafc; }
+        .bg-slate-800 { background-color: #1e293b; }
+        .bg-indigo-600 { background-color: #4f46e5; }
+        .border { border: 1px solid #e2e8f0; }
+        .border-r { border-right: 1px solid #e2e8f0; }
+        .border-b { border-bottom: 1px solid #e2e8f0; }
+        .rounded-lg { border-radius: 8px; }
+        .rounded-xl { border-radius: 12px; }
+        .rounded-2xl { border-radius: 16px; }
+        .rounded-full { border-radius: 9999px; }
+        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,.05); }
+        .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1); }
+        .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0,0,0,.06); }
+        .w-full { width: 100%; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        button { cursor: pointer; background: none; border: none; font-family: inherit; }
+        button:disabled { cursor: not-allowed; opacity: 0.2; }
+        input, select { font-family: inherit; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        .anim-fade { animation: fadeIn 0.4s ease-out; }
+        .sidebar { width: 280px; min-width: 280px; background: #f8fafc; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; height: 100vh; box-shadow: inset 0 2px 4px 0 rgba(0,0,0,.06); }
+        .record-item { padding: 14px 16px; border-radius: 16px; cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; margin-bottom: 6px; }
+        .record-item:hover { border-color: #e2e8f0; }
+        .record-item.active { background: #ffffff; border-color: #6366f1; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1); }
+        .record-item .delete-btn { display: none; margin-top: 8px; color: #ef4444; font-size: 11px; font-weight: 700; }
+        .record-item:hover .delete-btn { display: flex; align-items: center; gap: 4px; }
+        .home-card { background: #1e293b; border: 2px solid #334155; padding: 40px; border-radius: 24px; text-align: left; cursor: pointer; transition: all 0.2s; width: 100%; }
+        .home-card:hover { border-color: #6366f1; transform: translateY(-6px); box-shadow: 0 25px 50px -12px rgba(0,0,0,.4); }
+        .field-input { width: 100%; background: #f1f5f9; border: 2px solid transparent; padding: 16px; border-radius: 16px; outline: none; font-weight: 700; font-size: 14px; transition: all 0.2s; font-family: inherit; }
+        .field-input:focus { border-color: #6366f1; background: #ffffff; }
+        .field-input.has-error { border-color: #ef4444; background: rgba(239,68,68,0.05); }
+        .validation-panel { position: sticky; top: 120px; background: #0f172a; border-radius: 24px; padding: 32px; color: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,.25); max-height: calc(100vh - 140px); overflow-y: auto; }
+        .notification { position: fixed; top: 24px; right: 24px; z-index: 9999; min-width: 300px; padding: 16px 24px; border-radius: 16px; color: white; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 14px; box-shadow: 0 25px 50px -12px rgba(0,0,0,.3); animation: slideIn 0.3s ease-out; }
+        .btn-export { width: 100%; background: #0f172a; color: white; font-weight: 900; padding: 16px; border-radius: 16px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; box-shadow: 0 10px 15px -3px rgba(0,0,0,.2); transition: transform 0.1s; font-family: inherit; }
+        .btn-export:hover:not(:disabled) { transform: translateY(1px); }
+        .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .dot-red { background: #ef4444; }
+        .dot-green { background: #10b981; }
+        .icon-box { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 24px; }
+        .icon-box-sm { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .error-item { display: flex; gap: 8px; color: #f87171; font-size: 11px; background: rgba(239,68,68,0.1); padding: 12px; border-radius: 12px; border: 1px solid rgba(239,68,68,0.2); margin-bottom: 8px; }
+        .suffix { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 900; color: #94a3b8; }
+        .home-screen { min-height: 100vh; background: #0f172a; display: flex; align-items: center; justify-content: center; padding: 24px; }
+        .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
+        .tab-nav { display: flex; gap: 4px; background: #f1f5f9; padding: 6px; border-radius: 16px; overflow-x: auto; border: 1px solid #e2e8f0; }
+        .tab-btn { padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 700; color: #64748b; white-space: nowrap; transition: all 0.2s; }
+        .tab-btn:hover { background: #ffffff; color: #475569; }
+        .tab-btn.active { background: #4f46e5; color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1); }
+        .field-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+        .field-section { background: white; padding: 28px; border-radius: 20px; border: 1px solid #e2e8f0; }
+        .field-section-title { font-size: 14px; font-weight: 900; color: #0f172a; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #f1f5f9; letter-spacing: 0.05em; }
+        .grid-form { display: grid; grid-template-columns: 2fr 1fr; gap: 48px; }
+        .relative { position: relative; }
+        @media (max-width: 1024px) { .grid-form { grid-template-columns: 1fr; } .validation-panel { position: static; max-height: none; } }
+        @media (max-width: 640px) { .home-grid, .grid-2 { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <div id="loading">
-        <div class="spinner"></div>
-        <div class="loading-text">システムを起動しています...</div>
-        <div style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8;">初回は1分程度かかります</div>
-    </div>
-    <div id="fullscreen-tip" class="fullscreen-tip" style="display:none;">
-        💡 フルスクリーンで使用: Windows: F11 | Mac: Control+Command+F
-        <button onclick="document.getElementById('fullscreen-tip').style.display='none'">閉じる</button>
-    </div>
     <div id="root"></div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.58.0/build/stlite.js"></script>
-    <script>
-        window.addEventListener('load', function() {
-            setTimeout(function() {
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="fields_data.js"></script>
+    <script type="text/babel">
+        const { useState, useMemo, useRef, useEffect } = React;
+
+        const BUSINESS_UNITS = [
+            { id: 'intern', name: '技能実習', color: '#2563eb', description: '実習実施者・送出機関向けの項目構成', icon: '🏢' },
+            { id: 'skilled', name: '特定技能', color: '#0d9488', description: '支援計画書・雇用契約書向けの項目構成', icon: '⚡' }
+        ];
+
+        const TABS = [
+            { id: 1, name: '基本情報', icon: '📋' },
+            { id: 2, name: '生活環境・宿泊施設', icon: '🏠' },
+            { id: 3, name: '労働時間・休憩・休日', icon: '⏰' },
+            { id: 4, name: '賃金・手当・支払条件', icon: '💰' },
+            { id: 5, name: '募集要件', icon: '👥' }
+        ];
+
+        const getAllFields = () => {
+            const combined = [];
+            Object.keys(FIELD_DEFINITIONS).forEach((tabKey, idx) => {
+                const tabFields = FIELD_DEFINITIONS[tabKey].map(f => ({ ...f, tab: idx + 1 }));
+                combined.push(...tabFields);
+            });
+            return combined;
+        };
+
+        const FIELDS = getAllFields();
+
+        const isHalfWidth = (str) => !str || /^[a-zA-Z0-9!-/:-@[-`{-~\s]+$/.test(str);
+        const isNumeric = (str) => !str || /^[0-9]+$/.test(str);
+        const escapeCSV = (str) => {
+            if (str == null) return '';
+            const s = String(str);
+            if (s.includes(',') || s.includes('"') || s.includes('\n')) return `"${s.replace(/"/g, '""')}"`;
+            return s;
+        };
+
+        const Notification = ({ message, type, onClose }) => {
+            useEffect(() => {
+                const t = setTimeout(onClose, 3000);
+                return () => clearTimeout(t);
+            }, [onClose]);
+            const bg = type === 'error' ? '#ef4444' : type === 'warning' ? '#eab308' : '#10b981';
+            return (
+                <div className="notification" style={{ background: bg }}>
+                    <span>{type === 'error' ? '⚠️' : '✓'}</span>
+                    <span style={{ flex: 1 }}>{message}</span>
+                    <button onClick={onClose} style={{ color: 'white', fontSize: 18, padding: '2px 6px', borderRadius: 6 }}>✕</button>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [appMode, setAppMode] = useState(null);
+            const [dataList, setDataList] = useState([]);
+            const [currentId, setCurrentId] = useState(null);
+            const [currentTab, setCurrentTab] = useState(1);
+            const [notification, setNotification] = useState(null);
+            const fileInputRef = useRef(null);
+
+            const currentData = useMemo(() => dataList.find(d => d.id === currentId) || null, [dataList, currentId]);
+
+            const notify = (msg, type = 'success') => setNotification({ msg, type });
+
+            const createNew = () => {
+                const newId = `SF-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+                setDataList(prev => [...prev, { id: newId, bu: appMode, createdAt: new Date().toISOString() }]);
+                setCurrentId(newId);
+                setCurrentTab(1);
+                notify('新規レコードを作成しました');
+            };
+
+            const updateField = (fieldId, value) => {
+                setDataList(prev => prev.map(d => d.id === currentId ? { ...d, [fieldId]: value } : d));
+            };
+
+            const deleteRecord = (id) => {
+                if (!confirm('このレコードを削除してもよろしいですか？')) return;
+                setDataList(prev => prev.filter(d => d.id !== id));
+                if (currentId === id) setCurrentId(null);
+                notify('レコードを削除しました');
+            };
+
+            const validate = (data) => {
+                const errors = [];
+                if (!data) return errors;
+                FIELDS.filter(f => f.bu?.includes(data.bu)).forEach(f => {
+                    if (f.req && !data[f.id]) errors.push({ field: f.id, msg: `${f.label}は必須項目です。` });
+                    if (data[f.id] && f.val === 'half' && !isHalfWidth(data[f.id])) 
+                        errors.push({ field: f.id, msg: `${f.label}は半角英数字のみです。` });
+                    if (data[f.id] && f.val === 'num' && !isNumeric(data[f.id])) 
+                        errors.push({ field: f.id, msg: `${f.label}は半角数字のみです。` });
+                });
+                return errors;
+            };
+
+            const exportCSV = () => {
                 try {
-                    stlite.mount(
-                        {
-                            requirements: ["pandas"],
-                            entrypoint: "streamlit_app.py",
-                            files: {
-                                "streamlit_app.py": `
-import streamlit as st
-import pandas as pd
-import json
-import time
-from datetime import datetime
-
-# デフォルト項目定義
-DEFAULT_FIELDS = [
-    {"no": 1, "label": "企業名", "type": "text", "required": True, "page": 1},
-    {"no": 2, "label": "企業名（英語）", "type": "text", "required": True, "page": 1},
-    {"no": 3, "label": "所在地", "type": "text", "required": True, "page": 1},
-    {"no": 4, "label": "代表者名", "type": "text", "required": True, "page": 1},
-    {"no": 5, "label": "従業員数", "type": "number", "required": False, "page": 1},
-    {"no": 10, "label": "契約期間開始日", "type": "date", "required": True, "page": 2},
-    {"no": 11, "label": "契約期間終了日", "type": "date", "required": True, "page": 2},
-    {"no": 12, "label": "雇用形態", "type": "select", "required": True, "page": 2, "options": ["正社員", "契約社員", "技能実習生", "特定技能"]},
-    {"no": 13, "label": "宿泊施設", "type": "select", "required": True, "page": 2, "options": ["未定", "確定", "不要"]},
-    {"no": 17, "label": "宿舎総面積(㎡)", "type": "number", "required": False, "page": 2},
-    {"no": 18, "label": "居住人数", "type": "number", "required": False, "page": 2},
-    {"no": 20, "label": "年間休日", "type": "number", "required": True, "page": 3},
-    {"no": 21, "label": "週休制", "type": "select", "required": True, "page": 3, "options": ["完全週休2日制", "週休2日制", "週休1日制"]},
-    {"no": 22, "label": "1日の所定労働時間", "type": "number", "required": True, "page": 3},
-    {"no": 23, "label": "基本給（月額・円）", "type": "number", "required": True, "page": 3},
-    {"no": 24, "label": "都道府県", "type": "select", "required": True, "page": 3, "options": ["東京都", "大阪府", "愛知県", "神奈川県", "埼玉県", "千葉県", "福岡県", "北海道", "その他"]},
-    {"no": 30, "label": "残業手当", "type": "select", "required": True, "page": 4, "options": ["有（125%）", "有（150%）", "無"]},
-    {"no": 31, "label": "深夜手当", "type": "select", "required": True, "page": 4, "options": ["有", "無"]},
-    {"no": 32, "label": "休日手当", "type": "select", "required": True, "page": 4, "options": ["有", "無"]},
-]
-
-MIN_WAGE = {"東京都": 1113, "大阪府": 1064, "愛知県": 1027, "神奈川県": 1112, "埼玉県": 1028, "千葉県": 1026, "福岡県": 941, "北海道": 960, "その他": 900}
-
-def validate(data, fields):
-    errors = []
-    warnings = []
-    for f in fields:
-        fid = str(f["no"])
-        val = data.get(fid)
-        if f.get("required") and not val:
-            errors.append(f"[{fid}] {f['label']} は必須です")
-    
-    # 最低賃金チェック
-    if data.get("23") and data.get("24") and data.get("22"):
-        wage = float(data.get("23", 0))
-        pref = data.get("24")
-        hours = float(data.get("22", 8))
-        min_monthly = MIN_WAGE.get(pref, 900) * hours * 21.67
-        if wage < min_monthly:
-            warnings.append(f"基本給が最低賃金を下回る可能性があります")
-    
-    # 年間休日チェック
-    if data.get("20"):
-        if int(data.get("20", 0)) < 105:
-            warnings.append("年間休日が105日未満です")
-    
-    return errors, warnings
-
-st.set_page_config(page_title="雇用条件管理システム", page_icon="📋", layout="wide")
-
-if "db" not in st.session_state:
-    st.session_state.db = []
-if "current_id" not in st.session_state:
-    st.session_state.current_id = None
-if "fields" not in st.session_state:
-    st.session_state.fields = DEFAULT_FIELDS
-
-# サイドバー
-with st.sidebar:
-    st.title("📋 雇用条件管理")
-    st.divider()
-    
-    if st.button("➕ 新規作成", use_container_width=True, type="primary"):
-        new_id = f"emp_{int(time.time())}"
-        st.session_state.db.append({"id": new_id})
-        st.session_state.current_id = new_id
-        st.rerun()
-    
-    st.divider()
-    st.subheader("📋 データ一覧")
-    
-    if st.session_state.db:
-        for item in st.session_state.db:
-            name = item.get("1", "未入力")
-            errors, warnings = validate(item, st.session_state.fields)
-            icon = "❌" if errors else ("⚠️" if warnings else "✅")
-            if st.button(f"{icon} {name}", key=item["id"], use_container_width=True):
-                st.session_state.current_id = item["id"]
-                st.rerun()
-    else:
-        st.info("データがありません")
-    
-    st.divider()
-    
-    # エクスポート
-    if st.session_state.db:
-        st.subheader("📤 エクスポート")
-        json_str = json.dumps(st.session_state.db, ensure_ascii=False, indent=2)
-        st.download_button("💾 JSON", json_str, f"data_{datetime.now().strftime('%Y%m%d')}.json", "application/json", use_container_width=True)
-        
-        # CSV
-        export_data = []
-        for item in st.session_state.db:
-            row = {f["label"]: item.get(str(f["no"]), "") for f in st.session_state.fields}
-            export_data.append(row)
-        df = pd.DataFrame(export_data)
-        csv = df.to_csv(index=False).encode('utf-8-sig')
-        st.download_button("📥 CSV", csv, f"data_{datetime.now().strftime('%Y%m%d')}.csv", "text/csv", use_container_width=True)
-
-# メインエリア
-if st.session_state.current_id:
-    current = [x for x in st.session_state.db if x["id"] == st.session_state.current_id][0]
-    idx = st.session_state.db.index(current)
-    
-    st.title("雇用条件入力")
-    st.subheader(f"📝 {current.get('1', '新規作成')}")
-    
-    # 進捗
-    required = [f for f in st.session_state.fields if f.get("required")]
-    filled = sum(1 for f in required if current.get(str(f["no"])))
-    progress = filled / len(required) if required else 0
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        st.metric("入力進捗", f"{int(progress*100)}%")
-    with col2:
-        st.metric("必須項目", f"{filled}/{len(required)}")
-    
-    st.progress(progress)
-    st.divider()
-    
-    # ページタブ
-    pages = sorted(set(f["page"] for f in st.session_state.fields))
-    tabs = st.tabs([f"ページ {p}" for p in pages])
-    
-    for i, page_num in enumerate(pages):
-        with tabs[i]:
-            page_fields = [f for f in st.session_state.fields if f["page"] == page_num]
-            
-            for j in range(0, len(page_fields), 2):
-                cols = st.columns(2)
-                for k in range(2):
-                    if j+k < len(page_fields):
-                        f = page_fields[j+k]
-                        fid = str(f["no"])
-                        label = f"🔴 {f['label']}" if f.get("required") else f["label"]
-                        
-                        with cols[k]:
-                            if f["type"] == "number":
-                                val = float(current.get(fid, 0))
-                                new_val = st.number_input(label, value=val, key=f"{current['id']}_{fid}")
-                                current[fid] = new_val
-                            elif f["type"] == "select":
-                                opts = [""] + f.get("options", [])
-                                val = current.get(fid, "")
-                                idx_sel = opts.index(val) if val in opts else 0
-                                new_val = st.selectbox(label, opts, index=idx_sel, key=f"{current['id']}_{fid}")
-                                current[fid] = new_val
-                            elif f["type"] == "date":
-                                val = current.get(fid, "")
-                                new_val = st.text_input(label, value=val, key=f"{current['id']}_{fid}", placeholder="YYYY-MM-DD")
-                                current[fid] = new_val
-                            else:
-                                val = current.get(fid, "")
-                                new_val = st.text_input(label, value=val, key=f"{current['id']}_{fid}")
-                                current[fid] = new_val
-    
-    st.session_state.db[st.session_state.db.index(current)] = current
-    
-    st.divider()
-    
-    # バリデーション
-    st.subheader("📊 チェック結果")
-    errors, warnings = validate(current, st.session_state.fields)
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        if errors:
-            for e in errors:
-                st.error(e)
-        else:
-            st.success("✅ エラーなし")
-    with col2:
-        if warnings:
-            for w in warnings:
-                st.warning(w)
-        else:
-            st.success("✅ 警告なし")
-    
-    if not errors and not warnings:
-        st.balloons()
-    
-    st.divider()
-    
-    # 操作ボタン
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("🗑️ 削除", use_container_width=True):
-            st.session_state.db.pop(st.session_state.db.index(current))
-            st.session_state.current_id = None
-            st.rerun()
-    with col2:
-        if st.button("📋 複製", use_container_width=True):
-            new_id = f"emp_{int(time.time())}"
-            dup = current.copy()
-            dup["id"] = new_id
-            dup["1"] = f"{dup.get('1', '未入力')} (コピー)"
-            st.session_state.db.append(dup)
-            st.session_state.current_id = new_id
-            st.rerun()
-else:
-    st.title("雇用条件管理システム Pro")
-    st.write("左のサイドバーから「新規作成」をクリックして開始してください")
-    st.divider()
-    st.write("### 💡 主な機能")
-    st.write("- リアルタイムバリデーション")
-    st.write("- CSV/JSONエクスポート")
-    st.write("- 最低賃金チェック")
-    st.write("- 労働基準法チェック")
-`
-                            }
-                        },
-                        document.getElementById("root")
+                    const fields = FIELDS.filter(f => f.bu?.includes(appMode));
+                    const header = ['ID', ...fields.map(f => f.sf)].join(',');
+                    const rows = dataList.filter(d => d.bu === appMode).map(d =>
+                        [escapeCSV(d.id), ...fields.map(f => escapeCSV(d[f.id]))].join(',')
                     );
-                    
-                    setTimeout(function() {
-                        document.getElementById('loading').style.display = 'none';
-                        var tip = document.getElementById('fullscreen-tip');
-                        if (!localStorage.getItem('tip_shown')) {
-                            tip.style.display = 'block';
-                            setTimeout(function() { tip.style.display = 'none'; }, 10000);
-                            localStorage.setItem('tip_shown', 'true');
-                        }
-                    }, 2000);
-                } catch(e) {
-                    document.getElementById('loading').innerHTML = '<div style="color:white;text-align:center;"><h2>エラーが発生しました</h2><p>' + e.message + '</p><button onclick="location.reload()" style="margin-top:20px;padding:10px 20px;font-size:16px;cursor:pointer;">再読み込み</button></div>';
+                    const csv = '\uFEFF' + [header, ...rows].join('\n');
+                    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `SF_Import_${appMode}_${new Date().toISOString().split('T')[0]}.csv`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    notify('CSVを出力しました');
+                } catch (e) {
+                    notify('CSVの出力に失敗しました', 'error');
                 }
-            }, 500);
-        });
+            };
+
+            if (!appMode) {
+                return (
+                    <div className="home-screen">
+                        <div style={{ maxWidth: 800, width: '100%', textAlign: 'center' }}>
+                            <h1 style={{ fontSize: 48, fontWeight: 900, color: 'white', marginBottom: 8, letterSpacing: '-0.05em', fontStyle: 'italic' }}>
+                                CONTRACT MASTER
+                            </h1>
+                            <p style={{ color: '#64748b', marginBottom: 40, fontSize: 14 }}>雇用契約書作成システム</p>
+                            <div className="home-grid">
+                                {BUSINESS_UNITS.map(bu => (
+                                    <button key={bu.id} className="home-card" onClick={() => setAppMode(bu.id)}>
+                                        <div className="icon-box" style={{ background: bu.color }}>{bu.icon}</div>
+                                        <h2 style={{ fontSize: 22, fontWeight: 700, color: 'white', marginBottom: 8 }}>{bu.name}</h2>
+                                        <p style={{ color: '#64748b', fontSize: 13, marginBottom: 32 }}>{bu.description}</p>
+                                        <div style={{ color: '#818cf8', fontWeight: 700, fontSize: 11, letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: 6 }}>
+                                            START CREATION <span>→</span>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            const activeBU = BUSINESS_UNITS.find(b => b.id === appMode);
+            const buRecords = dataList.filter(d => d.bu === appMode);
+            const tabFields = FIELDS.filter(f => f.tab === currentTab && f.bu?.includes(appMode));
+            const validationErrors = validate(currentData);
+            const errorFieldIds = new Set(validationErrors.map(e => e.field));
+
+            return (
+                <div style={{ display: 'flex', height: '100vh', background: 'white' }}>
+                    {notification && <Notification message={notification.msg} type={notification.type} onClose={() => setNotification(null)} />}
+                    
+                    <div className="sidebar">
+                        <div style={{ padding: 24 }}>
+                            <button
+                                onClick={() => setAppMode(null)}
+                                style={{ fontSize: 11, fontWeight: 900, color: '#94a3b8', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 4, marginBottom: 24 }}
+                            >
+                                ← Back
+                            </button>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+                                <div className="icon-box-sm" style={{ background: activeBU.color, color: 'white' }}>📄</div>
+                                <h1 style={{ fontSize: 16, fontWeight: 900, letterSpacing: '-0.03em' }}>{activeBU.name}</h1>
+                            </div>
+                            <div className="grid-2">
+                                <button
+                                    onClick={createNew}
+                                    style={{ background: '#4f46e5', color: 'white', fontWeight: 900, padding: '12px 8px', borderRadius: 12, fontSize: 11, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}
+                                >
+                                    <span style={{ fontSize: 20 }}>＋</span> NEW
+                                </button>
+                                <button
+                                    onClick={() => fileInputRef.current.click()}
+                                    style={{ background: 'white', border: '1px solid #e2e8f0', color: '#475569', fontWeight: 900, padding: '12px 8px', borderRadius: 12, fontSize: 11, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}
+                                >
+                                    <span style={{ fontSize: 20 }}>↑</span> LOAD
+                                </button>
+                                <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept=".csv"
+                                    onChange={(e) => { notify('この環境ではファイル読み込みを制限しています。', 'warning'); e.target.value = ''; }} />
+                            </div>
+                        </div>
+
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px' }}>
+                            <div style={{ fontSize: 10, fontWeight: 900, color: '#cbd5e1', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8, paddingLeft: 8 }}>
+                                Records ({buRecords.length})
+                            </div>
+                            {buRecords.map(item => {
+                                const errors = validate(item);
+                                return (
+                                    <div key={item.id} className={`record-item ${currentId === item.id ? 'active' : ''}`}>
+                                        <div onClick={() => setCurrentId(item.id)}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+                                                <span style={{ fontWeight: 700, fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 8 }}>
+                                                    {item.company_name || '(未入力)'}
+                                                </span>
+                                                <div className={`dot ${errors.length > 0 ? 'dot-red' : 'dot-green'}`} />
+                                            </div>
+                                            <div style={{ fontSize: 10, fontFamily: 'monospace', color: '#94a3b8' }}>{item.id}</div>
+                                        </div>
+                                        <button className="delete-btn" onClick={(e) => { e.stopPropagation(); deleteRecord(item.id); }}>
+                                            🗑️ 削除
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div style={{ padding: 20, background: 'white', borderTop: '1px solid #e2e8f0' }}>
+                            <button className="btn-export" disabled={buRecords.length === 0} onClick={exportCSV}>
+                                💾 Export CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+                        {currentData ? (
+                            <>
+                                <div style={{ padding: '24px 32px', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: 'white', zIndex: 10, boxShadow: '0 1px 3px rgba(0,0,0,.08)' }}>
+                                    <h2 style={{ fontSize: 28, fontWeight: 900, letterSpacing: '-0.04em', margin: '0 0 16px 0' }}>
+                                        {currentData.company_name || 'New Item'}
+                                    </h2>
+                                    <div className="tab-nav">
+                                        {TABS.map(tab => (
+                                            <button
+                                                key={tab.id}
+                                                className={`tab-btn ${currentTab === tab.id ? 'active' : ''}`}
+                                                onClick={() => setCurrentTab(tab.id)}
+                                            >
+                                                <span style={{ marginRight: 6 }}>{tab.icon}</span> {tab.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div style={{ padding: 48, maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+                                    <div className="grid-form">
+                                        <div className="field-grid">
+                                            <div className="field-section anim-fade">
+                                                <div className="field-section-title">
+                                                    {TABS.find(t => t.id === currentTab)?.icon} {TABS.find(t => t.id === currentTab)?.name}
+                                                </div>
+                                                {tabFields.map(f => (
+                                                    <div key={f.id} style={{ marginBottom: 24 }}>
+                                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                                                            <label style={{ fontSize: 10, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#64748b' }}>
+                                                                {f.label} {f.req && <span style={{ color: '#ef4444' }}>*</span>}
+                                                            </label>
+                                                            <span style={{ fontSize: 9, fontFamily: 'monospace', color: '#cbd5e1', fontStyle: 'italic' }}>{f.sf}</span>
+                                                        </div>
+                                                        {f.type === 'select' ? (
+                                                            <select
+                                                                className={`field-input ${errorFieldIds.has(f.id) ? 'has-error' : ''}`}
+                                                                value={currentData[f.id] || ''}
+                                                                onChange={e => updateField(f.id, e.target.value)}
+                                                            >
+                                                                <option value="">未選択</option>
+                                                                {f.opts?.map(o => <option key={o} value={o}>{o}</option>)}
+                                                            </select>
+                                                        ) : (
+                                                            <div className="relative">
+                                                                <input
+                                                                    className={`field-input ${errorFieldIds.has(f.id) ? 'has-error' : ''}`}
+                                                                    type={f.type}
+                                                                    value={currentData[f.id] || ''}
+                                                                    onChange={e => updateField(f.id, e.target.value)}
+                                                                    placeholder={f.note || ''}
+                                                                />
+                                                                {f.suf && <span className="suffix">{f.suf}</span>}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <div className="validation-panel">
+                                                <div style={{ fontSize: 11, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                    <span style={{ color: '#818cf8' }}>⚙️</span> Validation
+                                                </div>
+                                                {validationErrors.length === 0 ? (
+                                                    <div style={{ textAlign: 'center', padding: '24px 0', color: '#34d399' }}>
+                                                        <div style={{ fontSize: 48, opacity: 0.6, marginBottom: 8 }}>✓</div>
+                                                        <div style={{ fontWeight: 900, fontSize: 13, letterSpacing: '0.05em' }}>ALL CLEARED</div>
+                                                    </div>
+                                                ) : validationErrors.map((e, i) => (
+                                                    <div key={i} className="error-item">
+                                                        <span style={{ flexShrink: 0 }}>⚠️</span>
+                                                        <span>{e.msg}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#e2e8f0' }}>
+                                <div style={{ fontSize: 64, opacity: 0.15, marginBottom: 16 }}>📋</div>
+                                <p style={{ fontSize: 11, fontWeight: 900, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Select an item to edit</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
 </html>
