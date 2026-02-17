@@ -1,109 +1,740 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employment Contract Builder - Enhanced</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        *, *::before, *::after { box-sizing: border-box; }
-        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; margin: 0; padding: 0; background: #0f172a; color: #1e293b; }
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .flex-1 { flex: 1; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-2 { gap: 8px; }
-        .gap-3 { gap: 12px; }
-        .h-screen { height: 100vh; }
-        .overflow-y-auto { overflow-y: auto; }
-        .p-4 { padding: 16px; }
-        .p-6 { padding: 24px; }
-        .px-6 { padding-left: 24px; padding-right: 24px; }
-        .py-3 { padding-top: 12px; padding-bottom: 12px; }
-        .mb-2 { margin-bottom: 8px; }
-        .mb-4 { margin-bottom: 16px; }
-        .mb-6 { margin-bottom: 24px; }
-        .text-xs { font-size: 12px; line-height: 1.4; }
-        .text-sm { font-size: 14px; line-height: 1.5; }
-        .text-lg { font-size: 18px; line-height: 1.5; }
-        .text-2xl { font-size: 24px; line-height: 1.3; }
-        .font-bold { font-weight: 700; }
-        .font-black { font-weight: 900; }
-        .text-white { color: #ffffff; }
-        .text-slate-400 { color: #94a3b8; }
-        .text-slate-500 { color: #64748b; }
-        .bg-white { background-color: #ffffff; }
-        .bg-slate-50 { background-color: #f8fafc; }
-        .bg-slate-800 { background-color: #1e293b; }
-        .bg-indigo-600 { background-color: #4f46e5; }
-        .border { border: 1px solid #e2e8f0; }
-        .border-r { border-right: 1px solid #e2e8f0; }
-        .border-b { border-bottom: 1px solid #e2e8f0; }
-        .rounded-lg { border-radius: 8px; }
-        .rounded-xl { border-radius: 12px; }
-        .rounded-2xl { border-radius: 16px; }
-        .rounded-full { border-radius: 9999px; }
-        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,.05); }
-        .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1); }
-        .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0,0,0,.06); }
-        .w-full { width: 100%; }
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        button { cursor: pointer; background: none; border: none; font-family: inherit; }
-        button:disabled { cursor: not-allowed; opacity: 0.2; }
-        input, select { font-family: inherit; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-        .anim-fade { animation: fadeIn 0.4s ease-out; }
-        .sidebar { width: 280px; min-width: 280px; background: #f8fafc; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; height: 100vh; box-shadow: inset 0 2px 4px 0 rgba(0,0,0,.06); }
-        .record-item { padding: 14px 16px; border-radius: 16px; cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; margin-bottom: 6px; }
-        .record-item:hover { border-color: #e2e8f0; }
-        .record-item.active { background: #ffffff; border-color: #6366f1; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1); }
-        .record-item .delete-btn { display: none; margin-top: 8px; color: #ef4444; font-size: 11px; font-weight: 700; }
-        .record-item:hover .delete-btn { display: flex; align-items: center; gap: 4px; }
-        .home-card { background: #1e293b; border: 2px solid #334155; padding: 40px; border-radius: 24px; text-align: left; cursor: pointer; transition: all 0.2s; width: 100%; }
-        .home-card:hover { border-color: #6366f1; transform: translateY(-6px); box-shadow: 0 25px 50px -12px rgba(0,0,0,.4); }
-        .field-input { width: 100%; background: #f1f5f9; border: 2px solid transparent; padding: 16px; border-radius: 16px; outline: none; font-weight: 700; font-size: 14px; transition: all 0.2s; font-family: inherit; }
-        .field-input:focus { border-color: #6366f1; background: #ffffff; }
-        .field-input.has-error { border-color: #ef4444; background: rgba(239,68,68,0.05); }
-        .validation-panel { position: sticky; top: 120px; background: #0f172a; border-radius: 24px; padding: 32px; color: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,.25); max-height: calc(100vh - 140px); overflow-y: auto; }
-        .notification { position: fixed; top: 24px; right: 24px; z-index: 9999; min-width: 300px; padding: 16px 24px; border-radius: 16px; color: white; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 14px; box-shadow: 0 25px 50px -12px rgba(0,0,0,.3); animation: slideIn 0.3s ease-out; }
-        .btn-export { width: 100%; background: #0f172a; color: white; font-weight: 900; padding: 16px; border-radius: 16px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; box-shadow: 0 10px 15px -3px rgba(0,0,0,.2); transition: transform 0.1s; font-family: inherit; }
-        .btn-export:hover:not(:disabled) { transform: translateY(1px); }
-        .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .dot-red { background: #ef4444; }
-        .dot-green { background: #10b981; }
-        .icon-box { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 24px; }
-        .icon-box-sm { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .error-item { display: flex; gap: 8px; color: #f87171; font-size: 11px; background: rgba(239,68,68,0.1); padding: 12px; border-radius: 12px; border: 1px solid rgba(239,68,68,0.2); margin-bottom: 8px; }
-        .suffix { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 900; color: #94a3b8; }
-        .home-screen { min-height: 100vh; background: #0f172a; display: flex; align-items: center; justify-content: center; padding: 24px; }
-        .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
-        .tab-nav { display: flex; gap: 4px; background: #f1f5f9; padding: 6px; border-radius: 16px; overflow-x: auto; border: 1px solid #e2e8f0; }
-        .tab-btn { padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 700; color: #64748b; white-space: nowrap; transition: all 0.2s; }
-        .tab-btn:hover { background: #ffffff; color: #475569; }
-        .tab-btn.active { background: #4f46e5; color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1); }
-        .field-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
-        .field-section { background: white; padding: 28px; border-radius: 20px; border: 1px solid #e2e8f0; }
-        .field-section-title { font-size: 14px; font-weight: 900; color: #0f172a; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #f1f5f9; letter-spacing: 0.05em; }
-        .grid-form { display: grid; grid-template-columns: 2fr 1fr; gap: 48px; }
-        .relative { position: relative; }
-        @media (max-width: 1024px) { .grid-form { grid-template-columns: 1fr; } .validation-panel { position: static; max-height: none; } }
-        @media (max-width: 640px) { .home-grid, .grid-2 { grid-template-columns: 1fr; } }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #0f172a;
+            color: #1e293b;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .flex-1 {
+            flex: 1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .gap-2 {
+            gap: 8px;
+        }
+
+        .gap-3 {
+            gap: 12px;
+        }
+
+        .h-screen {
+            height: 100vh;
+        }
+
+        .overflow-y-auto {
+            overflow-y: auto;
+        }
+
+        .p-4 {
+            padding: 16px;
+        }
+
+        .p-6 {
+            padding: 24px;
+        }
+
+        .px-6 {
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        .py-3 {
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+
+        .mb-2 {
+            margin-bottom: 8px;
+        }
+
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+
+        .mb-6 {
+            margin-bottom: 24px;
+        }
+
+        .text-xs {
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .text-sm {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .text-lg {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        .text-2xl {
+            font-size: 24px;
+            line-height: 1.3;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .font-black {
+            font-weight: 900;
+        }
+
+        .text-white {
+            color: #ffffff;
+        }
+
+        .text-slate-400 {
+            color: #94a3b8;
+        }
+
+        .text-slate-500 {
+            color: #64748b;
+        }
+
+        .bg-white {
+            background-color: #ffffff;
+        }
+
+        .bg-slate-50 {
+            background-color: #f8fafc;
+        }
+
+        .bg-slate-800 {
+            background-color: #1e293b;
+        }
+
+        .bg-indigo-600 {
+            background-color: #4f46e5;
+        }
+
+        .border {
+            border: 1px solid #e2e8f0;
+        }
+
+        .border-r {
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .border-b {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .rounded-lg {
+            border-radius: 8px;
+        }
+
+        .rounded-xl {
+            border-radius: 12px;
+        }
+
+        .rounded-2xl {
+            border-radius: 16px;
+        }
+
+        .rounded-full {
+            border-radius: 9999px;
+        }
+
+        .shadow-sm {
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
+        }
+
+        .shadow-xl {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, .1), 0 8px 10px -6px rgba(0, 0, 0, .1);
+        }
+
+        .shadow-inner {
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, .06);
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        button {
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.2;
+        }
+
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .anim-fade {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .sidebar {
+            width: 280px;
+            min-width: 280px;
+            background: #f8fafc;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, .06);
+        }
+
+        .record-item {
+            padding: 14px 16px;
+            border-radius: 16px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+            margin-bottom: 6px;
+        }
+
+        .record-item:hover {
+            border-color: #e2e8f0;
+        }
+
+        .record-item.active {
+            background: #ffffff;
+            border-color: #6366f1;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1);
+        }
+
+        .record-item .delete-btn {
+            display: none;
+            margin-top: 8px;
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .record-item:hover .delete-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .home-card {
+            background: #1e293b;
+            border: 2px solid #334155;
+            padding: 40px;
+            border-radius: 24px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .home-card:hover {
+            border-color: #6366f1;
+            transform: translateY(-6px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .4);
+        }
+
+        .field-input {
+            width: 100%;
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            padding: 16px;
+            border-radius: 16px;
+            outline: none;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .field-input:focus {
+            border-color: #6366f1;
+            background: #ffffff;
+        }
+
+        .field-input.has-error {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .validation-panel {
+            position: sticky;
+            top: 120px;
+            background: #0f172a;
+            border-radius: 24px;
+            padding: 32px;
+            color: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .25);
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .notification {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 9999;
+            min-width: 300px;
+            padding: 16px 24px;
+            border-radius: 16px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .btn-export {
+            width: 100%;
+            background: #0f172a;
+            color: white;
+            font-weight: 900;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .2);
+            transition: transform 0.1s;
+            font-family: inherit;
+        }
+
+        .btn-export:hover:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dot-red {
+            background: #ef4444;
+        }
+
+        .dot-green {
+            background: #10b981;
+        }
+
+        .icon-box {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 24px;
+        }
+
+        .icon-box-sm {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .error-item {
+            display: flex;
+            gap: 8px;
+            color: #f87171;
+            font-size: 11px;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            margin-bottom: 8px;
+        }
+
+        .suffix {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 11px;
+            font-weight: 900;
+            color: #94a3b8;
+        }
+
+        .home-screen {
+            min-height: 100vh;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .home-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-top: 32px;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 16px;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: #ffffff;
+            color: #475569;
+        }
+
+        .tab-btn.active {
+            background: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .1);
+        }
+
+        .field-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .field-section {
+            background: white;
+            padding: 28px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .field-section-title {
+            font-size: 14px;
+            font-weight: 900;
+            color: #0f172a;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f1f5f9;
+            letter-spacing: 0.05em;
+        }
+
+        .grid-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 48px;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-form {
+                grid-template-columns: 1fr;
+            }
+
+            .validation-panel {
+                position: static;
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+
+            .home-grid,
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div id="root"></div>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="fields_data.js"></script>
     <script type="text/babel">
         const { useState, useMemo, useRef, useEffect } = React;
+
+        // Field generation functions
+        function generateShiftFields(count) {
+            const fields = [];
+            for (let i = 1; i <= count; i++) {
+                fields.push(
+                    { id: `shift_start_${i}`, label: `【交代制】始業時刻${i}`, sf: `ShiftStart${i}__c`, type: 'time', req: false, bu: ['intern'] },
+                    { id: `shift_end_${i}`, label: `【交代制】終業時刻${i}`, sf: `ShiftEnd${i}__c`, type: 'time', req: false, bu: ['intern'] },
+                    { id: `shift_days_${i}`, label: `【交代制】交代制の適用日${i}`, sf: `ShiftDays${i}__c`, type: 'text', req: false, bu: ['intern'] },
+                    { id: `shift_break_start_${i}_1`, label: `【交代制】休憩開始時間${i}`, sf: `ShiftBreakStart${i}_1__c`, type: 'time', req: false, bu: ['intern'] },
+                    { id: `shift_break_end_${i}_1`, label: `【交代制】休憩終了時間${i}`, sf: `ShiftBreakEnd${i}_1__c`, type: 'time', req: false, bu: ['intern'] },
+                    { id: `shift_break_start_${i}_2`, label: `【交代制】休憩開始時間${i}-2`, sf: `ShiftBreakStart${i}_2__c`, type: 'time', req: false, bu: ['intern'] },
+                    { id: `shift_break_end_${i}_2`, label: `【交代制】休憩終了時間${i}-2`, sf: `ShiftBreakEnd${i}_2__c`, type: 'time', req: false, bu: ['intern'] },
+                    { id: `shift_break_start_${i}_3`, label: `【交代制】休憩開始時間${i}-3`, sf: `ShiftBreakStart${i}_3__c`, type: 'time', req: false, bu: ['intern'] },
+                    { id: `shift_break_end_${i}_3`, label: `【交代制】休憩終了時間${i}-3`, sf: `ShiftBreakEnd${i}_3__c`, type: 'time', req: false, bu: ['intern'] },
+                    { id: `shift_break_total_${i}`, label: `【交代制】休憩時間合計${i}（分）`, sf: `ShiftBreakTotal${i}__c`, type: 'number', req: false, suf: '分', bu: ['intern'] },
+                    { id: `shift_daily_hours_${i}`, label: `【交代制】1日の所定労働時間${i}(時間)`, sf: `ShiftDailyHours${i}__c`, type: 'number', req: false, suf: '時間', bu: ['intern'] },
+                    { id: `shift_daily_minutes_${i}`, label: `【交代制】1日の所定労働時間${i}(分)`, sf: `ShiftDailyMinutes${i}__c`, type: 'number', req: false, suf: '分', bu: ['intern'] }
+                );
+            }
+            return fields;
+        }
+
+        function generateAllowanceFields(count) {
+            const fields = [];
+            for (let i = 1; i <= count; i++) {
+                fields.push(
+                    { id: `allowance_name_${i}`, label: `手当名${i}`, sf: `AllowanceName${i}__c`, type: 'text', req: false, bu: ['intern'] },
+                    { id: `allowance_amount_${i}`, label: `手当額${i}`, sf: `AllowanceAmount${i}__c`, type: 'number', req: false, suf: '円', bu: ['intern'] },
+                    { id: `allowance_calc_${i}`, label: `手当の計算方法${i}`, sf: `AllowanceCalc${i}__c`, type: 'text', req: false, bu: ['intern'] }
+                );
+            }
+            return fields;
+        }
+
+        function generateOtherCostFields(count) {
+            const fields = [];
+            for (let i = 1; i <= count; i++) {
+                fields.push(
+                    { id: `other_cost_name_${i}`, label: `その他の負担費用名${i}`, sf: `OtherCostName${i}__c`, type: 'text', req: false, bu: ['intern'] },
+                    { id: `other_cost_type_${i}`, label: `その他負担費用${i} 種別`, sf: `OtherCostType${i}__c`, type: 'select', req: false, opts: ['実費', '定額'], bu: ['intern'] },
+                    { id: `other_cost_amount_${i}`, label: `その他の負担費用額${i}`, sf: `OtherCostAmount${i}__c`, type: 'number', req: false, suf: '円', bu: ['intern'] }
+                );
+            }
+            return fields;
+        }
+
+        // All field definitions
+        const FIELDS = [
+            // Tab 1: 基本情報
+            { id: 'company_name', label: '企業名', sf: 'Name', type: 'text', req: true, bu: ['intern', 'skilled'], tab: 1 },
+            { id: 'company_name_en', label: '企業名(英)', sf: 'EnglishName__c', type: 'text', req: true, val: 'half', bu: ['intern', 'skilled'], tab: 1 },
+            { id: 'sales_name', label: '担当者名', sf: 'SalesName__c', type: 'text', req: true, bu: ['intern', 'skilled'], tab: 1 },
+            { id: 'rep_name', label: '代表者名', sf: 'RepresentativeName__c', type: 'text', req: true, bu: ['intern', 'skilled'], tab: 1 },
+            { id: 'rep_name_en', label: '代表者(英語)', sf: 'RepresentativeNameEN__c', type: 'text', req: true, val: 'half', bu: ['intern', 'skilled'], tab: 1 },
+            { id: 'rep_position', label: '代表者役職名', sf: 'RepresentativePosition__c', type: 'text', req: true, bu: ['intern', 'skilled'], tab: 1 },
+            { id: 'postal_code', label: '所在地(郵便番号)', sf: 'PostalCode__c', type: 'text', req: true, val: 'num', bu: ['intern', 'skilled'], tab: 1 },
+            { id: 'address', label: '所在地(拠点)', sf: 'Address__c', type: 'text', req: true, bu: ['intern', 'skilled'], tab: 1 },
+            { id: 'address_en', label: '住所(英)', sf: 'AddressEN__c', type: 'text', req: true, val: 'half', bu: ['intern', 'skilled'], tab: 1 },
+            { id: 'job_type', label: '職種(技能実習)', sf: 'JobType__c', type: 'text', req: true, bu: ['intern'], tab: 1 },
+            { id: 'work_name', label: '作業名', sf: 'WorkName__c', type: 'text', req: true, bu: ['intern'], tab: 1 },
+            { id: 'workplace_name', label: '就業先事業所名', sf: 'WorkplaceName__c', type: 'text', req: false, bu: ['intern'], tab: 1 },
+
+            // Tab 2: 生活環境・宿泊施設
+            { id: 'housing_status', label: '宿泊施設', sf: 'HousingStatus__c', type: 'select', req: true, opts: ['未定', '確定'], bu: ['intern', 'skilled'], tab: 2 },
+            { id: 'housing_id', label: '宿泊施設ID', sf: 'HousingID__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 2 },
+            { id: 'housing_postal', label: '宿泊施設郵便番号', sf: 'HousingPostalCode__c', type: 'text', req: false, val: 'num', bu: ['intern', 'skilled'], tab: 2 },
+            { id: 'housing_property_name', label: '宿泊施設物件名', sf: 'HousingPropertyName__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 2 },
+            { id: 'housing_address', label: '宿泊施設住所', sf: 'HousingAddress__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 2 },
+            { id: 'property_area', label: '物件の総面積', sf: 'PropertyTotalArea__c', type: 'number', req: false, suf: '㎡', bu: ['intern', 'skilled'], tab: 2 },
+            { id: 'housing_residents', label: '宿泊施設の居住者人数', sf: 'HousingResidents__c', type: 'number', req: false, suf: '人', bu: ['intern', 'skilled'], tab: 2 },
+            { id: 'area_per_person', label: '1人あたり居室面積', sf: 'AreaPerPerson__c', type: 'number', req: false, suf: '㎡', bu: ['intern', 'skilled'], tab: 2 },
+
+            // Tab 3: 労働時間・休憩・休日
+            { id: 'annual_holidays', label: '年間合計休日数(日)', sf: 'AnnualHolidays__c', type: 'number', req: true, suf: '日', bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'has_work_rules', label: '就業規則の有無', sf: 'HasWorkRules__c', type: 'select', req: true, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'daily_work_hours', label: '1日の所定労働時間(時間)', sf: 'DailyWorkHours__c', type: 'number', req: true, suf: '時間', bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'daily_work_minutes', label: '1日の所定労働時間(分)', sf: 'DailyWorkMinutes__c', type: 'number', req: false, suf: '分', bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'annual_work_hours', label: '年所定労働時間(時間)', sf: 'AnnualWorkHours__c', type: 'number', req: false, suf: '時間', bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'annual_work_minutes', label: '年所定労働時間(分)', sf: 'AnnualWorkMinutes__c', type: 'number', req: false, suf: '分', bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'weekly_work_hours', label: '週所定労働時間(時間)', sf: 'WeeklyWorkHours__c', type: 'number', req: true, suf: '時間', bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'weekly_work_minutes', label: '週所定労働時間(分)', sf: 'WeeklyWorkMinutes__c', type: 'number', req: false, suf: '分', bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'start_time', label: '【基本】始業時刻', sf: 'StartTime__c', type: 'time', req: true, bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'end_time', label: '【基本】終業時刻', sf: 'EndTime__c', type: 'time', req: true, bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'break_start_1', label: '【基本】休憩開始1', sf: 'BreakStart1__c', type: 'time', req: false, bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'break_end_1', label: '【基本】休憩終了1', sf: 'BreakEnd1__c', type: 'time', req: false, bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'break_start_2', label: '【基本】休憩開始2', sf: 'BreakStart2__c', type: 'time', req: false, bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'break_end_2', label: '【基本】休憩終了2', sf: 'BreakEnd2__c', type: 'time', req: false, bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'break_start_3', label: '【基本】休憩開始3', sf: 'BreakStart3__c', type: 'time', req: false, bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'break_end_3', label: '【基本】休憩終了3', sf: 'BreakEnd3__c', type: 'time', req: false, bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'break_total_minutes', label: '【基本】休憩時間合計(分)', sf: 'BreakTotalMinutes__c', type: 'number', req: false, suf: '分', bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'has_overtime', label: '所定時間外労働の有無', sf: 'HasOvertime__c', type: 'select', req: true, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'has_flex_time', label: '【基本】変形時間労働制の有無', sf: 'HasFlexTime__c', type: 'select', req: false, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'saturday_work', label: '【基本】土曜日勤務の有無', sf: 'SaturdayWork__c', type: 'select', req: false, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'regular_holiday_day', label: '定例休日の曜日', sf: 'RegularHolidayDay__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'regular_holiday_other', label: '定例休日その他', sf: 'RegularHolidayOther__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'irregular_holiday', label: '非定休日', sf: 'IrregularHoliday__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'irregular_holiday_days', label: '非定例休日の日数', sf: 'IrregularHolidayDays__c', type: 'number', req: false, suf: '日', bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'national_holidays', label: '日本の国民の祝日', sf: 'NationalHolidays__c', type: 'select', req: false, opts: ['休み', '出勤'], bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'other_start_time', label: '【その他】始業時刻', sf: 'OtherStartTime__c', type: 'time', req: false, bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'other_end_time', label: '【その他】終業時刻', sf: 'OtherEndTime__c', type: 'time', req: false, bu: ['intern', 'skilled'], tab: 3 },
+            { id: 'has_shift', label: '交代制の有無', sf: 'HasShift__c', type: 'select', req: false, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 3 },
+            ...generateShiftFields(5),
+
+            // Tab 4: 賃金・手当・支払条件
+            { id: 'payment_type', label: '支払区分', sf: 'PaymentType__c', type: 'select', req: true, opts: ['月給', '日給', '時給'], bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'monthly_salary_1', label: '月給額(実習1号)', sf: 'MonthlySalary1__c', type: 'number', req: false, suf: '円', bu: ['intern'], tab: 4 },
+            { id: 'daily_salary_1', label: '日給額(実習1号)', sf: 'DailySalary1__c', type: 'number', req: false, suf: '円', bu: ['intern'], tab: 4 },
+            { id: 'hourly_salary_1', label: '時給額(実習1号)', sf: 'HourlySalary1__c', type: 'number', req: false, suf: '円', bu: ['intern'], tab: 4 },
+            { id: 'monthly_salary_2', label: '月給額(実習2号)', sf: 'MonthlySalary2__c', type: 'number', req: false, suf: '円', bu: ['intern'], tab: 4 },
+            { id: 'daily_salary_2', label: '日給額(実習2号)', sf: 'DailySalary2__c', type: 'number', req: false, suf: '円', bu: ['intern'], tab: 4 },
+            { id: 'hourly_salary_2', label: '時給額(実習2号)', sf: 'HourlySalary2__c', type: 'number', req: false, suf: '円', bu: ['intern'], tab: 4 },
+            { id: 'monthly_salary_3', label: '月給額(実習3号)', sf: 'MonthlySalary3__c', type: 'number', req: false, suf: '円', bu: ['intern'], tab: 4 },
+            { id: 'daily_salary_3', label: '日給額(実習3号)', sf: 'DailySalary3__c', type: 'number', req: false, suf: '円', bu: ['intern'], tab: 4 },
+            { id: 'hourly_salary_3', label: '時給額(実習3号)', sf: 'HourlySalary3__c', type: 'number', req: false, suf: '円', bu: ['intern'], tab: 4 },
+            { id: 'monthly_work_hours', label: '月所定労働時間(時間)', sf: 'MonthlyWorkHours__c', type: 'number', req: false, suf: '時間', bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'monthly_work_minutes', label: '月所定労働時間(分)', sf: 'MonthlyWorkMinutes__c', type: 'number', req: false, suf: '分', bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'has_bonus', label: '賞与有無', sf: 'HasBonus__c', type: 'select', req: false, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'has_raise', label: '昇給有無', sf: 'HasRaise__c', type: 'select', req: false, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 4 },
+            ...generateAllowanceFields(4),
+            { id: 'has_retirement', label: '退職金有無', sf: 'HasRetirement__c', type: 'select', req: false, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'resignation_notice_days', label: '退職届出の猶予日数（日前）', sf: 'ResignationNoticeDays__c', type: 'number', req: false, suf: '日', bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'wage_cutoff_day', label: '賃金締切日', sf: 'WageCutoffDay__c', type: 'number', req: false, suf: '日', bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'wage_payment_day', label: '賃金支払日', sf: 'WagePaymentDay__c', type: 'number', req: false, suf: '日', bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'wage_cutoff_day_2', label: '賃金締切日2', sf: 'WageCutoffDay2__c', type: 'number', req: false, suf: '日', bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'wage_payment_day_2', label: '賃金支払日2', sf: 'WagePaymentDay2__c', type: 'number', req: false, suf: '日', bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'wage_payment_method', label: '賃金支払方法', sf: 'WagePaymentMethod__c', type: 'select', req: false, opts: ['銀行振込', '現金支給'], bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'health_checkup_hire', label: '雇入れ時の健康診断 受診日', sf: 'HealthCheckupHire__c', type: 'date', req: false, bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'health_checkup_first', label: '初回健康診断 受診日', sf: 'HealthCheckupFirst__c', type: 'date', req: false, bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'health_checkup_schedule', label: 'その後の健康診断実施時期', sf: 'HealthCheckupSchedule__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'has_wage_deduction', label: '賃金支払い時の控除有無', sf: 'HasWageDeduction__c', type: 'select', req: false, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'pension_type', label: '加入年金種別', sf: 'PensionType__c', type: 'select', req: false, opts: ['厚生年金', '国民年金'], bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'insurance_type', label: '加入保険種別', sf: 'InsuranceType__c', type: 'select', req: false, opts: ['健康保険', '国民健康保険'], bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'other_insurance', label: 'その他の保険', sf: 'OtherInsurance__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'labor_insurance_total', label: '労働保険控除総額', sf: 'LaborInsuranceTotal__c', type: 'number', req: false, suf: '円', bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'income_tax', label: '所得税', sf: 'IncomeTax__c', type: 'number', req: false, suf: '円', bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'social_insurance_total', label: '社会保険控除総額', sf: 'SocialInsuranceTotal__c', type: 'number', req: false, suf: '円', bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'provides_meals', label: '食事食材等の提供有無', sf: 'ProvidesMeals__c', type: 'select', req: false, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'housing_fee_monthly', label: '居住費徴収額（月）', sf: 'HousingFeeMonthly__c', type: 'number', req: false, suf: '円', bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'housing_property_type', label: '居住物件種別', sf: 'HousingPropertyType__c', type: 'select', req: false, opts: ['会社所有', '賃貸', '寮'], bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'housing_fee_explanation', label: '居住費が実費に相当する額その他の適正な額であることの説明', sf: 'HousingFeeExplanation__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'charges_utilities', label: '水道光熱費の徴収の有無', sf: 'ChargesUtilities__c', type: 'select', req: false, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'utilities_type', label: '水道光熱費種別', sf: 'UtilitiesType__c', type: 'select', req: false, opts: ['実費', '定額'], bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'utilities_details', label: '水道光熱費の詳細', sf: 'UtilitiesDetails__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'has_other_fees', label: 'その他技能実習生が定期に負担する費用の有無', sf: 'HasOtherFees__c', type: 'select', req: false, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'telecom_type', label: '通信費種別', sf: 'TelecomType__c', type: 'select', req: false, opts: ['実費', '定額', '無'], bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'telecom_fee_monthly', label: '実費以外の時の通信費（月）', sf: 'TelecomFeeMonthly__c', type: 'number', req: false, suf: '円', bu: ['intern', 'skilled'], tab: 4 },
+            ...generateOtherCostFields(4),
+            { id: 'other_cost_benefits', label: 'その他負担費用に対する便益', sf: 'OtherCostBenefits__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 4 },
+            { id: 'other_cost_explanation', label: 'その他の負担費用が実費に相当する額であることの説明', sf: 'OtherCostExplanation__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 4 },
+
+            // Tab 5: 募集要件
+            { id: 'placement_date', label: '配属希望日', sf: 'PlacementDate__c', type: 'date', req: false, bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'company_culture', label: '会社の特徴／社風', sf: 'CompanyCulture__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'foreigner_experience', label: '外国人受入経験', sf: 'ForeignerExperience__c', type: 'select', req: false, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'actual_work_content', label: '実際の実習内容', sf: 'ActualWorkContent__c', type: 'text', req: false, bu: ['intern'], tab: 5 },
+            { id: 'training_period', label: '実習期間', sf: 'TrainingPeriod__c', type: 'select', req: false, opts: ['1年', '2年', '3年', '5年'], bu: ['intern'], tab: 5 },
+            { id: 'high_altitude_work', label: '高所作業', sf: 'HighAltitudeWork__c', type: 'select', req: false, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'outdoor_indoor_ratio', label: '屋外屋内作業比率', sf: 'OutdoorIndoorRatio__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'overtime_nightshift', label: '残業・夜勤の有無', sf: 'OvertimeNightshift__c', type: 'select', req: false, opts: ['有', '無'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'sending_org_notes', label: '送出機関への共有事項', sf: 'SendingOrgNotes__c', type: 'text', req: false, bu: ['intern'], tab: 5 },
+            { id: 'gender', label: '性別', sf: 'Gender__c', type: 'select', req: false, opts: ['男性', '女性', '不問'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'preferred_age', label: '希望年齢', sf: 'PreferredAge__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'blood_type', label: '血液型', sf: 'BloodType__c', type: 'select', req: false, opts: ['A', 'B', 'O', 'AB', '不問'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'preferred_height', label: '希望身長', sf: 'PreferredHeight__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'preferred_weight', label: '希望体重', sf: 'PreferredWeight__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'body_type', label: '体格', sf: 'BodyType__c', type: 'select', req: false, opts: ['小柄', '普通', '大柄', '不問'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'fitness_video', label: '体力測定動画', sf: 'FitnessVideo__c', type: 'select', req: false, opts: ['必要', '不要'], bu: ['intern'], tab: 5 },
+            { id: 'dominant_hand', label: '利き手', sf: 'DominantHand__c', type: 'select', req: false, opts: ['右', '左', '不問'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'japanese_level', label: '日本語能力', sf: 'JapaneseLevel__c', type: 'select', req: false, opts: ['N5', 'N4', 'N3', 'N2', 'N1', '不問'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'glasses', label: 'メガネ', sf: 'Glasses__c', type: 'select', req: false, opts: ['可', '不可', '不問'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'tattoo', label: '刺青', sf: 'Tattoo__c', type: 'select', req: false, opts: ['可', '不可', '不問'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'marital_status', label: '結婚', sf: 'MaritalStatus__c', type: 'select', req: false, opts: ['既婚可', '未婚のみ', '不問'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'manners', label: '礼儀・マナー', sf: 'Manners__c', type: 'select', req: false, opts: ['重視', '普通', '不問'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'smoking', label: '喫煙', sf: 'Smoking__c', type: 'select', req: false, opts: ['可', '不可', '不問'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'drinking', label: '飲酒', sf: 'Drinking__c', type: 'select', req: false, opts: ['可', '不可', '不問'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'work_experience', label: '現場経験', sf: 'WorkExperience__c', type: 'select', req: false, opts: ['必要', '不要', '不問'], bu: ['intern', 'skilled'], tab: 5 },
+            { id: 'hometown', label: '出身地', sf: 'Hometown__c', type: 'text', req: false, bu: ['intern', 'skilled'], tab: 5 }
+        ];
 
         const BUSINESS_UNITS = [
             { id: 'intern', name: '技能実習', color: '#2563eb', description: '実習実施者・送出機関向けの項目構成', icon: '🏢' },
@@ -117,17 +748,6 @@
             { id: 4, name: '賃金・手当・支払条件', icon: '💰' },
             { id: 5, name: '募集要件', icon: '👥' }
         ];
-
-        const getAllFields = () => {
-            const combined = [];
-            Object.keys(FIELD_DEFINITIONS).forEach((tabKey, idx) => {
-                const tabFields = FIELD_DEFINITIONS[tabKey].map(f => ({ ...f, tab: idx + 1 }));
-                combined.push(...tabFields);
-            });
-            return combined;
-        };
-
-        const FIELDS = getAllFields();
 
         const isHalfWidth = (str) => !str || /^[a-zA-Z0-9!-/:-@[-`{-~\s]+$/.test(str);
         const isNumeric = (str) => !str || /^[0-9]+$/.test(str);
@@ -189,9 +809,9 @@
                 if (!data) return errors;
                 FIELDS.filter(f => f.bu?.includes(data.bu)).forEach(f => {
                     if (f.req && !data[f.id]) errors.push({ field: f.id, msg: `${f.label}は必須項目です。` });
-                    if (data[f.id] && f.val === 'half' && !isHalfWidth(data[f.id])) 
+                    if (data[f.id] && f.val === 'half' && !isHalfWidth(data[f.id]))
                         errors.push({ field: f.id, msg: `${f.label}は半角英数字のみです。` });
-                    if (data[f.id] && f.val === 'num' && !isNumeric(data[f.id])) 
+                    if (data[f.id] && f.val === 'num' && !isNumeric(data[f.id]))
                         errors.push({ field: f.id, msg: `${f.label}は半角数字のみです。` });
                 });
                 return errors;
@@ -251,7 +871,7 @@
             return (
                 <div style={{ display: 'flex', height: '100vh', background: 'white' }}>
                     {notification && <Notification message={notification.msg} type={notification.type} onClose={() => setNotification(null)} />}
-                    
+
                     <div className="sidebar">
                         <div style={{ padding: 24 }}>
                             <button
@@ -410,4 +1030,5 @@
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
+
 </html>
